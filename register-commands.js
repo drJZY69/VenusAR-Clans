@@ -4,7 +4,7 @@ import path from "path";
 import config from "./config.json" assert { type: "json" };
 
 // اكتب هنا ID السيرفر اللي تبغى ترفع فيه الأوامر
-const GUILD_ID = "اكتب_هنا_رقم_السيرفر";
+const GUILD_ID = "1261766298975604749";
 
 const commands = [];
 const commandsPath = "./commands";
