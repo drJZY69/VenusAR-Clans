@@ -1,10 +1,11 @@
 import { Client, GatewayIntentBits, Collection } from "discord.js";
 import fs from "fs";
 import mongoose from "mongoose";
-import config from "./config.json" assert { type: "json" };
 import Tracker from "./utils/tracker.js";
 
-// تحميل التوكن من Railway
+// قراءة config.json بدون assert
+const config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+
 const TOKEN = process.env.TOKEN || config.token;
 const CLIENT_ID = process.env.CLIENT_ID || config.clientId;
 const MONGO_URI = process.env.MONGO_URI || config.mongoURI;
@@ -19,7 +20,7 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// تحميل ملفات الأوامر
+// تحميل الأوامر
 const commandsFolder = "./commands";
 const commandFiles = fs.readdirSync(commandsFolder).filter(f => f.endsWith(".js"));
 
@@ -29,11 +30,10 @@ for (const file of commandFiles) {
   console.log(`✔ Loaded command: ${command.default.name}`);
 }
 
-// تشغيل البوت
 client.once("ready", async () => {
   console.log(`🔥 Logged in as ${client.user.tag}`);
 
-  // اتصال MongoDB
+  // MongoDB
   try {
     await mongoose.connect(MONGO_URI);
     console.log("✔ MongoDB Connected");
@@ -41,7 +41,6 @@ client.once("ready", async () => {
     console.error("❌ MongoDB Error:", err);
   }
 
-  // بدء نظام التتبع
   Tracker.start(client);
 });
 
