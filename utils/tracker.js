@@ -23,16 +23,17 @@ class TrackerSystem {
 
       for (const clan of clans) {
         try {
+          // روم الصوت
           const channel = client.channels.cache.get(clan.voiceChannelId);
           if (!channel) continue;
 
+          // فلترة الأعضاء → كل عضو عنده أي رتبة من مصفوفة roleIds
           const membersInVoice = [...channel.members.values()]
-            .filter(member => member.roles.cache.has(clan.roleId)); // فقط أعضاء الكلان
+            .filter(member => clan.roleIds.some(r => member.roles.cache.has(r)));
 
           const count = membersInVoice.length;
           if (count === 0) continue;
 
-          // حساب الوقت الحقيقي للتايمر
           const timerDoc = await Timer.findOne({ clanName: clan.name });
           const now = Date.now();
 
@@ -46,7 +47,7 @@ class TrackerSystem {
           if (minutesPassed >= clan.timer) {
             logger.info(`Adding points for clan ${clan.name}`);
 
-            // إضافة النقاط للأعضاء
+            // نقاط كل عضو
             for (const member of membersInVoice) {
               let memDoc = await Member.findOne({
                 userId: member.id,
@@ -67,7 +68,7 @@ class TrackerSystem {
               await memDoc.save();
             }
 
-            // تحديث نقاط الكلان
+            // نقاط الكلان
             clan.totalPoints += count;
             clan.membersCount = count;
             await clan.save();
@@ -80,12 +81,11 @@ class TrackerSystem {
           logger.error(err);
         }
       }
-    }, 10 * 1000); // التتبع كل 10 ثواني فقط
+    }, 10 * 1000); // كل 10 ثواني
   }
 
   stop() {
     if (!this.running) return;
-
     this.running = false;
     clearInterval(this.interval);
     logger.warning("Tracking system stopped.");
