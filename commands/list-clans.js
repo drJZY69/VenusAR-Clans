@@ -15,9 +15,11 @@ export default {
     }
 
     let text = "📋 **قائمة الكلانات:**\n\n";
-    clans.forEach(c => {
-      text += `• **${c.name}** — Role: <@&${c.roleId}> — Room: <#${c.voiceChannelId}>\n`;
-    });
+
+    for (const c of clans) {
+      const roles = c.roleIds.map(r => `<@&${r}>`).join(" , ");
+      text += `• **${c.name}**\n   🟪 الرتب: ${roles}\n   🎧 الروم: <#${c.voiceChannelId}>\n\n`;
+    }
 
     return interaction.reply(text);
   }
