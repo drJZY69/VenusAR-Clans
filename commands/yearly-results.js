@@ -8,7 +8,7 @@ export default {
   name: "yearly-results",
   data: new SlashCommandBuilder()
     .setName("yearly-results")
-    .setDescription("عرض نتائج السنة للكلانات")
+    .setDescription("عرض نتائج السنة")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   async execute(interaction, client) {
@@ -26,10 +26,7 @@ export default {
 
       const total = members.reduce((sum, m) => sum + m.yearlyPoints, 0);
 
-      msg += `🟣 **${clan.name}**  
-👥 الأعضاء: ${members.length}  
-👑 أفضل عضو: ${top}  
-📊 مجموع نقاط السنة: ${total}\n\n`;
+      msg += `🟣 **${clan.name}**\n👥 الأعضاء: ${members.length}\n👑 أفضل عضو: ${top}\n📊 مجموع نقاط السنة: ${total}\n\n`;
 
       if (members.length > 0) {
         await Record.create({
@@ -42,3 +39,13 @@ export default {
 
       for (const m of members) {
         m.yearlyPoints = 0;
+        await m.save();
+      }
+    }
+
+    const channel = client.channels.cache.get(config.resultsChannel);
+    if (channel) channel.send(msg);
+
+    return interaction.reply("📨 تم إرسال نتائج السنة!");
+  }
+};
