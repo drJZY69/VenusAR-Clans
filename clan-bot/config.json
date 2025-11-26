@@ -1,5 +1,6 @@
 {
-  "token": "",
-  "mongoURI": "",
+  "token": "توكن البوت هنا",
+  "clientId": "ايدي البوت هنا",
+  "mongoURI": "رابط MongoDB هنا",
   "resultsChannel": ""
 }
