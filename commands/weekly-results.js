@@ -13,28 +13,24 @@ export default {
 
   async execute(interaction, client) {
     const clans = await Clan.find();
+
     if (!clans.length) {
-      return interaction.reply("❌ لا يوجد أي كلان مسجل.");
+      return interaction.reply("❌ لا يوجد كلانات.");
     }
 
     const config = JSON.parse(fs.readFileSync("./config.json"));
-
-    let finalMessage = "🏆 **نتائج الأسبوع للكلانات:**\n\n";
+    let msg = "🏆 **نتائج الأسبوع:**\n\n";
 
     for (const clan of clans) {
       const members = await Member.find({ clanName: clan.name });
 
-      let topMember = members.sort((a, b) => b.weeklyPoints - a.weeklyPoints)[0];
-      topMember = topMember ? `<@${topMember.userId}> (${topMember.weeklyPoints})` : "لا يوجد مشاركين";
+      let top = members.sort((a, b) => b.weeklyPoints - a.weeklyPoints)[0];
+      top = top ? `<@${top.userId}> (${top.weeklyPoints})` : "لا يوجد مشاركين";
 
       const total = members.reduce((sum, m) => sum + m.weeklyPoints, 0);
 
-      finalMessage += `🔥 **${clan.name}**  
-👥 عدد الأعضاء: ${members.length}  
-👑 أفضل عضو: ${topMember}  
-📊 مجموع نقاط الأسبوع: ${total}\n\n`;
+      msg += `🔥 **${clan.name}**\n👥 الأعضاء: ${members.length}\n👑 أفضل عضو: ${top}\n📊 مجموع نقاط الأسبوع: ${total}\n\n`;
 
-      // حفظ سجل الأسبوع
       if (members.length > 0) {
         await Record.create({
           clanName: clan.name,
@@ -44,7 +40,6 @@ export default {
         });
       }
 
-      // تصفير نقاط الأسبوع
       for (const m of members) {
         m.weeklyPoints = 0;
         await m.save();
@@ -52,7 +47,7 @@ export default {
     }
 
     const channel = client.channels.cache.get(config.resultsChannel);
-    if (channel) channel.send(finalMessage);
+    if (channel) channel.send(msg);
 
     return interaction.reply("📨 تم إرسال نتائج الأسبوع!");
   }
