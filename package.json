@@ -1,0 +1,16 @@
+{
+  "name": "clan-bot",
+  "version": "1.0.0",
+  "description": "Clan Tracking Discord Bot by drJZY",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "register": "node register-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.6.3"
+  }
+}
