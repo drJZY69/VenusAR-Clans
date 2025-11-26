@@ -8,7 +8,7 @@ export default {
   name: "monthly-results",
   data: new SlashCommandBuilder()
     .setName("monthly-results")
-    .setDescription("عرض نتائج الشهر للكلانات")
+    .setDescription("عرض نتائج الشهر")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
   async execute(interaction, client) {
@@ -27,10 +27,7 @@ export default {
 
       const total = members.reduce((sum, m) => sum + m.monthlyPoints, 0);
 
-      msg += `🔵 **${clan.name}**  
-👥 الأعضاء: ${members.length}  
-👑 أفضل عضو: ${top}  
-📊 مجموع نقاط الشهر: ${total}\n\n`;
+      msg += `🔵 **${clan.name}**\n👥 الأعضاء: ${members.length}\n👑 أفضل عضو: ${top}\n📊 مجموع نقاط الشهر: ${total}\n\n`;
 
       if (members.length > 0) {
         await Record.create({
